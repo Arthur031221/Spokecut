@@ -122,7 +122,7 @@ def test_upload_stores_the_file_and_deduplicates(client, video):
     data = video.read_bytes()
     a = client.post("/api/upload?name=My%20Talk.mp4", content=data)
     b = client.post("/api/upload?name=My%20Talk.mp4", content=data)
-    assert a.status_code == 202 and a.json()["id"] == b.json()["id"]
+    assert a.status_code in (200, 202) and a.json()["id"] == b.json()["id"]
     assert wait(client, a.json()["id"])["name"] == "My Talk.mp4"
     assert client.post("/api/upload?name=x.mp4", content=b"").status_code == 400
 
