@@ -69,18 +69,26 @@ def project_for(args: argparse.Namespace, video: Path):
     return analyze(video, args.model, args.language, args.device, args.verbatim, progress_printer())
 
 
+def allowed_hosts(host: str) -> frozenset[str]:
+    """Host header values to accept besides loopback. Browsers send an IPv6 literal in brackets."""
+    names = {host, f"[{host}]"} if ":" in host else {host}
+    return frozenset(names - {"127.0.0.1", "localhost"})
+
+
 def listen(host: str, port: int, tries: int = 20) -> socket.socket:
     """A listening socket on the first free port from `port` up, so a second editor does not collide with the first."""
     family = socket.AF_INET6 if ":" in host else socket.AF_INET
-    for candidate in range(port, port + tries):
+    for candidate in range(port, min(port + tries, 65536)):
         sock = socket.socket(family, socket.SOCK_STREAM)
+        if sys.platform != "win32":  # on Windows this option would let two programs share one port
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             sock.bind((host, candidate))
             sock.listen(128)
             return sock
         except OSError:
             sock.close()
-    raise OSError(f"ports {port} to {port + tries - 1} on {host} are all in use")
+    raise OSError(f"no free port from {port} on {host}")
 
 
 def cmd_edit(args: argparse.Namespace) -> int:
@@ -92,7 +100,7 @@ def cmd_edit(args: argparse.Namespace) -> int:
         err("Bind to one address instead, for example --host 192.168.1.20. Spokecut can read and write your files.")
         return 2
     token = secrets.token_urlsafe(18)
-    extra = frozenset({args.host} - {"127.0.0.1", "localhost"})
+    extra = allowed_hosts(args.host)
     app = create_app(Config(args.model, args.language, args.device, args.verbatim, token, extra))
     for name in args.files:
         video = check_input(name)
@@ -133,7 +141,8 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
 
 
 def cmd_clean(args: argparse.Namespace) -> int:
-    """Clean each file in turn. A failure in one does not stop the others, and any failure makes the exit code 1."""
+    """Clean each file in turn. A failure in one does not stop the others. Exit 2 if an input was unusable, else 1 if
+    any file failed."""
     if len(args.files) > 1 and args.output:
         err("-o names one output file, so it works with one input. Drop it to write each result beside its video.")
         return 2
@@ -169,7 +178,11 @@ def clean_one(args: argparse.Namespace, name: str) -> int:
         state.pause["keep"] = args.keep
     if args.captions:
         state.caption["style"] = args.captions
-    save_project(project, sidecar_path(video))
+    try:
+        save_project(project, sidecar_path(video))
+    except OSError as exc:
+        err(f"{name}: cannot save the project file: {exc}")
+        return 1
     # Whether to burn captions into this render is not part of the saved edit.
     state.caption["burn"] = bool(args.captions)
     keeps, _ = plan(project)
@@ -181,7 +194,12 @@ def clean_one(args: argparse.Namespace, name: str) -> int:
         err(f"\nexport failed: {exc}")
         return 1
     err()
-    print(f"{before:.1f} s -> {after:.1f} s ({before - after:.1f} s removed), wrote {save(result, video)}")
+    try:
+        written = save(result, video)
+    except OSError as exc:
+        err(f"{name}: cannot write the result: {exc}")
+        return 1
+    print(f"{before:.1f} s -> {after:.1f} s ({before - after:.1f} s removed), wrote {written}")
     return 0
 
 

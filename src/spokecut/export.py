@@ -42,6 +42,8 @@ def _format_name(width: int, height: int, fps: Fraction) -> str:
     rate = {Fraction(30000, 1001): "2997", Fraction(24000, 1001): "2398", Fraction(60000, 1001): "5994"}.get(
         fps, str(round(fps))
     )
+    if height > width:
+        return "FFVideoFormatRateUndefined"  # Final Cut has no named portrait formats
     return f"FFVideoFormat{height}p{rate}"
 
 

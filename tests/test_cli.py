@@ -141,7 +141,7 @@ def test_listen_gives_up_when_nothing_is_free():
     with socket.socket() as taken:
         taken.bind(("127.0.0.1", 0))
         taken.listen(1)
-        with pytest.raises(OSError, match="all in use"):
+        with pytest.raises(OSError, match="no free port"):
             cli.listen("127.0.0.1", taken.getsockname()[1], tries=1)
 
 
@@ -181,3 +181,14 @@ def test_clean_takes_several_files_and_keeps_going_after_a_failure(tone_video, t
 def test_clean_refuses_one_output_name_for_several_files(capsys):
     assert cli.main(["clean", "a.mp4", "b.mp4", "-o", "x.mp4"]) == 2
     assert "one input" in capsys.readouterr().err
+
+
+def test_listen_near_the_top_of_the_port_range_fails_cleanly():
+    with pytest.raises(OSError, match="no free port"):
+        cli.listen("127.0.0.1", 70000)
+
+
+def test_allowed_hosts_include_the_bracketed_ipv6_form():
+    assert cli.allowed_hosts("127.0.0.1") == frozenset()
+    assert cli.allowed_hosts("192.168.1.20") == frozenset({"192.168.1.20"})
+    assert cli.allowed_hosts("2001:db8::5") == frozenset({"2001:db8::5", "[2001:db8::5]"})

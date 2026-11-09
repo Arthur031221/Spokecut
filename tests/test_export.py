@@ -86,6 +86,15 @@ def test_fcpxml_reads_back_through_the_fcpx_adapter(tmp_path):
     assert total == pytest.approx(tl.output_duration(keeps), abs=0.05)
 
 
+def test_fcpxml_names_a_portrait_frame_without_a_fake_final_cut_format():
+    p, _, _ = planned(deleted=[1])
+    p.media.width, p.media.height = 1080, 1920
+    text = export_project(p, VIDEO, "fcpxml").text
+    assert 'name="FFVideoFormatRateUndefined"' in text and 'width="1080" height="1920"' in text
+    p.media.width, p.media.height = 1920, 1080
+    assert "FFVideoFormat1080p" in export_project(p, VIDEO, "fcpxml").text
+
+
 def test_fcpxml_escapes_names():
     p, _, _ = planned(deleted=[1])
     p.media.file = 'a "b" & <c>.mp4'
