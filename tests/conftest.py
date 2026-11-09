@@ -39,6 +39,16 @@ def project() -> Project:
 needs_ffmpeg = pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg is not installed")
 
 
+def _has_ass_filter() -> bool:
+    if not shutil.which("ffmpeg"):
+        return False
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-filters"], capture_output=True, text=True).stdout
+    return any(line.split()[1:2] == ["ass"] for line in out.splitlines())
+
+
+needs_ass = pytest.mark.skipif(not _has_ass_filter(), reason="this ffmpeg has no ass filter (libass)")
+
+
 @pytest.fixture(scope="session")
 def tone_video(tmp_path_factory) -> Path:
     """Three seconds of test pattern with a 440 Hz tone, 30 fps."""

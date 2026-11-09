@@ -127,4 +127,10 @@ def render(
             if not failed or "Unrecognized option 'filter_complex_script'" not in log.read_text(errors="replace"):
                 break
         if failed:
-            raise MediaError(f"ffmpeg failed: {log.read_text(errors='replace').strip()[-400:]}")
+            text = log.read_text(errors="replace")
+            if ass is not None and "No such filter: 'ass'" in text:
+                raise MediaError(
+                    "this ffmpeg was built without libass, so it cannot burn in captions; "
+                    "install a full ffmpeg build or render without captions"
+                )
+            raise MediaError(f"ffmpeg failed: {text.strip()[-400:]}")

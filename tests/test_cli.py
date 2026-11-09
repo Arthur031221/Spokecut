@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from conftest import make_project, needs_ffmpeg
+from conftest import make_project, needs_ass, needs_ffmpeg
 
 from spokecut import cli
 from spokecut.project import Media, save_project, sidecar_path
@@ -85,6 +85,7 @@ def test_export_formats(tone_video, tmp_path, fmt):
 
 
 @needs_ffmpeg
+@needs_ass
 def test_render_keeps_a_caption_file_exported_earlier(tone_video, tmp_path):
     video = tmp_path / "talk.mp4"
     video.write_bytes(tone_video.read_bytes())

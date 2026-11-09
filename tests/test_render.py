@@ -105,3 +105,15 @@ def test_render_falls_back_when_ffmpeg_dropped_filter_complex_script(tmp_path, m
     assert "-filter_complex_script" in seen[0]
     assert "-/filter_complex" in seen[1]
     assert "-filter_complex_script" not in seen[1]
+
+
+def test_missing_libass_is_explained(tmp_path, monkeypatch):
+    real_popen = subprocess.Popen
+
+    def popen(cmd, **kwargs):
+        code = "import sys; sys.stderr.write(\"No such filter: 'ass'\"); sys.exit(1)"
+        return real_popen([sys.executable, "-c", code], **kwargs)
+
+    monkeypatch.setattr(render.subprocess, "Popen", popen)
+    with pytest.raises(MediaError, match="libass"):
+        render.render(tmp_path / "in.mp4", tmp_path / "o.mp4", [(0.0, 1.0)], 30.0, ass=tmp_path / "c.ass")
