@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-文字起こしは CPU で動き、レンダリングは x264 です。Mac では Spokecut を実行していません。
+文字起こしは CPU で動き、レンダリングは x264 です。自分では Mac で Spokecut を使っていません。CI が macOS でレンダリングを含むテストを実行しています。焼き込み字幕には libass 付きの ffmpeg が必要で、ない場合は Spokecut がそう伝えます。
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-Windows では Spokecut を実行していません。CI は Linux だけです。
+自分では Windows で Spokecut を使っていません。CI が Windows でレンダリングを含むテストを実行しています。
 
 </details>
 

@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-转录在 CPU 上运行，渲染用 x264。我没有在 Mac 上跑过 Spokecut。
+转录在 CPU 上运行，渲染用 x264。我自己没有在 Mac 上用过 Spokecut。CI 会在 macOS 上运行测试，包括渲染。烧录字幕需要带 libass 的 ffmpeg，没有的话 Spokecut 会提示。
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-我没有在 Windows 上跑过 Spokecut。CI 只覆盖 Linux。
+我自己没有在 Windows 上用过 Spokecut。CI 会在 Windows 上运行测试，包括渲染。
 
 </details>
 

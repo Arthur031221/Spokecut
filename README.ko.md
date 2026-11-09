@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-받아쓰기는 CPU에서 돌고 렌더링은 x264를 씁니다. Mac에서는 Spokecut을 실행해 보지 않았습니다.
+받아쓰기는 CPU에서 돌고 렌더링은 x264를 씁니다. 직접 Mac에서 Spokecut을 써 보지는 않았습니다. CI가 macOS에서 렌더링을 포함한 테스트를 실행합니다. 자막을 영상에 입히려면 libass가 들어간 ffmpeg가 필요하며, 없으면 Spokecut이 알려 줍니다.
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-Windows에서는 Spokecut을 실행해 보지 않았습니다. CI는 Linux만 다룹니다.
+직접 Windows에서 Spokecut을 써 보지는 않았습니다. CI가 Windows에서 렌더링을 포함한 테스트를 실행합니다.
 
 </details>
 

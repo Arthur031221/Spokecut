@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-La transcripción se ejecuta en la CPU y el renderizado usa x264. No he ejecutado Spokecut en un Mac.
+La transcripción se ejecuta en la CPU y el renderizado usa x264. No he usado Spokecut en un Mac. La CI ejecuta las pruebas, renderizados incluidos, en macOS. Los subtítulos incrustados necesitan un ffmpeg con libass, y Spokecut lo avisa si el tuyo no lo tiene.
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-No he ejecutado Spokecut en Windows. El trabajo de CI solo cubre Linux.
+No he usado Spokecut en Windows. La CI ejecuta las pruebas, renderizados incluidos, en Windows.
 
 </details>
 

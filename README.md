@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-Transcription runs on the CPU and the render uses x264. I haven't run Spokecut on a Mac.
+Transcription runs on the CPU and the render uses x264. I haven't used Spokecut on a Mac myself. CI runs the tests, including renders, on macOS. Burned in captions need an ffmpeg built with libass, and Spokecut tells you when yours doesn't have it.
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-I haven't run Spokecut on Windows. The CI job covers Linux only.
+I haven't used Spokecut on Windows myself. CI runs the tests, including renders, on Windows.
 
 </details>
 

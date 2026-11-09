@@ -56,7 +56,7 @@ pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-A transcrição roda na CPU e a renderização usa x264. Não executei o Spokecut num Mac.
+A transcrição roda na CPU e a renderização usa x264. Eu mesmo não usei o Spokecut num Mac. A CI roda os testes, renderizações incluídas, no macOS. Legendas gravadas no vídeo precisam de um ffmpeg com libass, e o Spokecut avisa se o seu não tiver.
 
 </details>
 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
-Não executei o Spokecut no Windows. O job de CI cobre só Linux.
+Eu mesmo não usei o Spokecut no Windows. A CI roda os testes, renderizações incluídas, no Windows.
 
 </details>
 
