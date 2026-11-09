@@ -104,5 +104,6 @@
   "err.analyze": "Falló la transcripción: {message}",
   "err.save": "No se guardó tu último cambio: {message}",
   "err.export": "Falló la exportación: {message}",
-  "demo.banner": "Demo en vivo. Las ediciones se quedan en este navegador. Instala Spokecut para transcribir tu propio vídeo y renderizar MP4."
+  "demo.banner": "Demo en vivo. Las ediciones se quedan en este navegador. Instala Spokecut para transcribir tu propio vídeo y renderizar MP4.",
+  "demo.install": "Cómo instalarlo"
 }

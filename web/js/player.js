@@ -54,11 +54,20 @@ export class Player {
     this.refresh();
   }
 
+  /** Shape the preview like the video frame so the captions land where the render puts them. */
+  fitFrame({ width, height }) {
+    const wrap = this.els.video.parentElement;
+    const ok = width > 0 && height > 0;
+    wrap.style.setProperty("--ar", ok ? `${width} / ${height}` : "16 / 9");
+    wrap.style.setProperty("--arn", ok ? String(width / height) : "1.778");
+  }
+
   /** Recompute cuts and captions after the edit state changed. */
   refresh() {
     const { project, state } = this.store;
     if (!project) return;
     this.plan = plan(project, state);
+    this.fitFrame(project.media);
     const kept = keptWords(project.words, state, this.plan.segs);
     this.chunks = chunkWords(kept, project.language, maxCharsFor(project.media.width, project.media.height));
     this.capKey = "";

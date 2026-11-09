@@ -1,7 +1,7 @@
 // Boot, views and wiring. The other modules know nothing about each other; this file connects them.
 
 import { detect } from "./api.js";
-import { LOCALES, apply, initLocale, onLocale, setLocale, t, locale } from "./i18n.js";
+import { LOCALES, apply, initLocale, installLink, onLocale, setLocale, t, locale } from "./i18n.js";
 import { CaptionPanel, Cleanup, ExportPanel } from "./panels.js";
 import { Player, clock } from "./player.js";
 import { Store } from "./store.js";
@@ -273,7 +273,7 @@ function retranslate() {
   const key = $("save-state").dataset.key;
   if (key) setSaveState(key);
   const demo = $("demo-banner");
-  if (api?.mode === "demo") demo.textContent = t("demo.banner");
+  if (api?.mode === "demo") demo.replaceChildren(t("demo.banner"), " ", installLink());
   $("play").setAttribute("aria-label", t($("video").paused ? "player.play" : "player.pause"));
 }
 
@@ -293,7 +293,6 @@ async function main() {
   if (api.mode === "demo") {
     $("demo-banner").hidden = false;
     $("open-file").hidden = true;
-    $("demo-banner").textContent = t("demo.banner");
     await openProject("demo");
     return;
   }

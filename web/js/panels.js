@@ -1,6 +1,6 @@
 // The three side panels: cleanup (above the transcript), captions and export.
 
-import { t } from "./i18n.js";
+import { installLink, t } from "./i18n.js";
 import { toggleDeleted } from "./store.js";
 import { findMatches } from "./find.js";
 import { findPauses } from "./timeline.js";
@@ -255,7 +255,7 @@ export class ExportPanel {
     for (const li of $("export-list").children) {
       const fmt = li.dataset.fmt;
       const [title, hint] = li.querySelectorAll("strong, span");
-      if (fmt === "demo") { title.textContent = t("export.demoTitle"); hint.textContent = t("export.demoBody"); continue; }
+      if (fmt === "demo") { title.textContent = t("export.demoTitle"); hint.replaceChildren(t("export.demoBody"), " ", installLink()); continue; }
       title.textContent = t(`export.${fmt}.title`);
       hint.textContent = t(`export.${fmt}.hint`);
       const button = li.querySelector("button");

@@ -73,3 +73,14 @@ export async function initLocale() {
   await setLocale(code);
   return code;
 }
+
+const INSTALL_URL = "https://github.com/Arthur031221/Spokecut#install";
+
+/** The demo cannot transcribe or render, so it points at the install steps. */
+export function installLink() {
+  const a = document.createElement("a");
+  a.href = INSTALL_URL;
+  a.rel = "noopener";
+  a.textContent = t("demo.install");
+  return a;
+}

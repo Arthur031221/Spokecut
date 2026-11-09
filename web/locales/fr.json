@@ -104,5 +104,6 @@
   "err.analyze": "La transcription a échoué : {message}",
   "err.save": "Votre dernière modification n'a pas été enregistrée : {message}",
   "err.export": "L'export a échoué : {message}",
-  "demo.banner": "Démo en ligne. Les modifications restent dans ce navigateur. Installez Spokecut pour transcrire votre propre vidéo et générer un MP4."
+  "demo.banner": "Démo en ligne. Les modifications restent dans ce navigateur. Installez Spokecut pour transcrire votre propre vidéo et générer un MP4.",
+  "demo.install": "Comment l'installer"
 }

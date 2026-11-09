@@ -104,5 +104,6 @@
   "err.analyze": "轉錄失敗：{message}",
   "err.save": "最後一次修改未能儲存：{message}",
   "err.export": "匯出失敗：{message}",
-  "demo.banner": "線上展示。修改只留在這個瀏覽器。安裝 Spokecut 即可轉錄自己的影片並輸出 MP4。"
+  "demo.banner": "線上展示。修改只留在這個瀏覽器。安裝 Spokecut 即可轉錄自己的影片並輸出 MP4。",
+  "demo.install": "安裝方式"
 }

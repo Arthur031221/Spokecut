@@ -104,5 +104,6 @@
   "err.analyze": "转录失败：{message}",
   "err.save": "最后一次修改未能保存：{message}",
   "err.export": "导出失败：{message}",
-  "demo.banner": "在线演示。修改只保留在这个浏览器中。安装 Spokecut 即可转录自己的视频并导出 MP4。"
+  "demo.banner": "在线演示。修改只保留在这个浏览器中。安装 Spokecut 即可转录自己的视频并导出 MP4。",
+  "demo.install": "安装方法"
 }

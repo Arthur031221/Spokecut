@@ -104,5 +104,6 @@
   "err.analyze": "Transcription failed: {message}",
   "err.save": "Your last change was not saved: {message}",
   "err.export": "Export failed: {message}",
-  "demo.banner": "Live demo. Edits stay in this browser. Install Spokecut to transcribe your own video and render MP4."
+  "demo.banner": "Live demo. Edits stay in this browser. Install Spokecut to transcribe your own video and render MP4.",
+  "demo.install": "How to install"
 }

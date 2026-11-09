@@ -62,3 +62,26 @@ def test_audio_only_render(tone_video, tmp_path):
     out = tmp_path / "o.m4a"
     render.render(tone_video, out, [(0.0, 1.0), (2.0, 3.0)], 0.0, False)
     assert duration(out) == pytest.approx(2.0, abs=0.1)
+
+
+@pytest.fixture
+def phone_video(tone_video, tmp_path):
+    """The 320x240 clip with a 90 degree rotation flag, the way a phone stores a portrait recording."""
+    out = tmp_path / "phone.mp4"
+    subprocess.run(
+        ["ffmpeg", "-v", "error", "-y", "-display_rotation", "90", "-i", str(tone_video), "-c", "copy", str(out)],
+        check=True,
+    )
+    return out
+
+
+def test_probe_reports_the_rotated_frame(phone_video):
+    media, _ = probe(phone_video)
+    assert (media.width, media.height) == (240, 320)
+
+
+def test_render_of_a_rotated_source_matches_the_probed_size(phone_video, tmp_path):
+    out = tmp_path / "out.mp4"
+    render.render(phone_video, out, [(0.0, 2.0)], 30.0, True, None, "x264")
+    media, _ = probe(out)
+    assert (media.width, media.height) == (240, 320)

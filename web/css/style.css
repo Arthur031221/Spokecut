@@ -48,6 +48,7 @@ input[type="color"] { width: 44px; height: 32px; padding: 2px; border: 1px solid
 .btn.small { min-height: 30px; padding: 3px 10px; font-size: 13px; }
 .btn.toggle[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 650; }
 
+.banner a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .banner { margin: 0; padding: 8px 20px; text-align: center; font-size: 13.5px; background: color-mix(in srgb, var(--accent) 14%, var(--panel)); border-bottom: 1px solid var(--line); }
 main { max-width: 1400px; margin: 0 auto; padding: 18px 20px 40px; }
 
@@ -67,7 +68,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 18px 20px 40px; }
 
 .editor { display: grid; grid-template-columns: minmax(340px, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
 .stage { position: sticky; top: 64px; display: grid; gap: 12px; }
-.video-wrap { position: relative; background: #000; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; box-shadow: var(--shadow); container-type: size; }
+.video-wrap { position: relative; background: #000; border-radius: var(--radius); overflow: hidden; aspect-ratio: var(--ar, 16 / 9); width: min(100%, calc(62vh * var(--arn, 1.778))); margin: 0 auto; box-shadow: var(--shadow); container-type: size; }
 .video-wrap video { width: 100%; height: 100%; object-fit: contain; display: block; }
 .audio-only { position: absolute; inset: 0; display: grid; place-items: center; color: var(--accent); background: var(--panel); }
 .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -157,7 +158,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 18px 20px 40px; }
 @media (max-width: 960px) {
   .editor { grid-template-columns: 1fr; }
   .stage { position: sticky; top: 56px; z-index: 10; background: var(--bg); padding-bottom: 8px; }
-  .video-wrap { width: min(100%, 50vh); margin: 0 auto; }
+  .video-wrap { width: min(100%, calc(50vh * var(--arn, 1.778))); }
   .wave { height: 56px; }
   .summary { display: none; }
   .transcript { max-height: none; }

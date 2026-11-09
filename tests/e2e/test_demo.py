@@ -316,3 +316,34 @@ def test_find_phrase_and_a_fixed_word_follow_the_edit(page, demo_url):
     page.keyboard.type("Stack")
     page.keyboard.press("Enter")
     assert page.locator(".w.hit").count() == before - 1
+
+
+def test_the_preview_takes_the_shape_of_a_portrait_video(page, demo_url, demo_project):
+    import json
+
+    portrait = json.loads(json.dumps(demo_project))
+    portrait["media"]["width"], portrait["media"]["height"] = 540, 960
+    page.route("**/demo/project.json", lambda route: route.fulfill(content_type="application/json", body=json.dumps(portrait)))
+    open_demo(page, demo_url)
+    box = page.locator(".video-wrap").bounding_box()
+    assert box["width"] / box["height"] == pytest.approx(540 / 960, abs=0.02)
+    cap = page.locator("#caption-layer .cap").bounding_box()
+    assert cap["x"] >= box["x"] - 1 and cap["x"] + cap["width"] <= box["x"] + box["width"] + 1
+    assert page.problems == []
+
+
+def test_a_landscape_video_still_fills_the_column(page, demo_url):
+    open_demo(page, demo_url)
+    box = page.locator(".video-wrap").bounding_box()
+    assert box["width"] / box["height"] == pytest.approx(16 / 9, abs=0.02)
+
+
+def test_the_demo_points_at_the_install_steps(page, demo_url):
+    open_demo(page, demo_url)
+    banner = page.locator("#demo-banner a")
+    assert banner.get_attribute("href") == "https://github.com/Arthur031221/Spokecut#install"
+    page.click("#tab-export")
+    assert page.locator('#export-list li[data-fmt="demo"] a').count() == 1
+    page.select_option("#lang-select", "de")
+    page.wait_for_function("document.querySelector('#demo-banner a').textContent === 'So wird es installiert'")
+    assert page.problems == []

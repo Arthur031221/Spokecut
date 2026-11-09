@@ -104,5 +104,6 @@
   "err.analyze": "Die Transkription ist fehlgeschlagen: {message}",
   "err.save": "Deine letzte Änderung wurde nicht gespeichert: {message}",
   "err.export": "Der Export ist fehlgeschlagen: {message}",
-  "demo.banner": "Live-Demo. Änderungen bleiben in diesem Browser. Installiere Spokecut, um dein eigenes Video zu transkribieren und als MP4 zu rendern."
+  "demo.banner": "Live-Demo. Änderungen bleiben in diesem Browser. Installiere Spokecut, um dein eigenes Video zu transkribieren und als MP4 zu rendern.",
+  "demo.install": "So wird es installiert"
 }

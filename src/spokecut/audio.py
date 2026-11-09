@@ -48,6 +48,21 @@ def _rate(text: str) -> float:
     return float(r)
 
 
+def _display_size(video: dict) -> tuple[int, int]:
+    """Width and height as shown. Phones often store landscape pixels plus a rotation flag, and ffmpeg and
+    browsers apply it, so the captions have to be laid out for the rotated frame."""
+    width, height = int(video.get("width", 0)), int(video.get("height", 0))
+    turn = (video.get("tags") or {}).get("rotate")
+    for side in video.get("side_data_list") or []:
+        if "rotation" in side:
+            turn = side["rotation"]
+    try:
+        quarter = round(float(turn) / 90) % 2 == 1
+    except (TypeError, ValueError):
+        quarter = False
+    return (height, width) if quarter else (width, height)
+
+
 def probe(path: Path) -> tuple[Media, dict]:
     """Media facts plus the codec names the proxy decision needs."""
     info = _probe_raw(path)
@@ -63,12 +78,13 @@ def probe(path: Path) -> tuple[Media, dict]:
     if duration <= 0:
         raise MediaError(f"{path.name} has no readable duration")
     fps = _rate(video.get("avg_frame_rate", "0")) or _rate(video.get("r_frame_rate", "0")) if video else 0.0
+    width, height = _display_size(video) if video else (0, 0)
     media = Media(
         file=path.name,
         duration=duration,
         fps=fps or (30.0 if video else 0.0),
-        width=int(video.get("width", 0)) if video else 0,
-        height=int(video.get("height", 0)) if video else 0,
+        width=width,
+        height=height,
         has_video=video is not None,
     )
     codecs = {"video": video.get("codec_name") if video else None, "audio": audio.get("codec_name")}
