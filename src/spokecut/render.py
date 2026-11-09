@@ -102,23 +102,29 @@ def render(
     with tempfile.TemporaryDirectory(prefix="spokecut-") as tmp:
         script = Path(tmp) / "graph.txt"
         script.write_text(build_filter(keeps, fps, has_video, ass), encoding="utf-8")
-        cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(video), "-filter_complex_script", str(script)]
+        tail = []
         if has_video:
-            cmd += ["-map", "[v]", "-map", "[a]", *encoder_args(encoder), "-pix_fmt", "yuv420p"]
+            tail += ["-map", "[v]", "-map", "[a]", *encoder_args(encoder), "-pix_fmt", "yuv420p"]
         else:
-            cmd += ["-map", "[a]"]
-        cmd += ["-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-progress", "pipe:1", "-nostats", str(out)]
+            tail += ["-map", "[a]"]
+        tail += ["-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-progress", "pipe:1", "-nostats", str(out)]
         log = Path(tmp) / "ffmpeg.log"
-        # stderr goes to a file so a chatty ffmpeg can never fill a pipe while we read the progress lines.
-        with log.open("w") as log_file:
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=log_file, text=True)
-            assert proc.stdout is not None
-            for line in proc.stdout:
-                if line.startswith("out_time_us=") and progress and total:
-                    try:
-                        progress(max(0.0, min(1.0, int(line.split("=")[1]) / 1e6 / total)))
-                    except ValueError:
-                        pass
-            failed = proc.wait()
+        # ffmpeg 7 renamed -filter_complex_script to -/filter_complex and 8 dropped the old name,
+        # so try the old one first and fall back when this ffmpeg does not know it.
+        for graph_option in (["-filter_complex_script", str(script)], ["-/filter_complex", str(script)]):
+            cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(video), *graph_option, *tail]
+            # stderr goes to a file so a chatty ffmpeg can never fill a pipe while we read the progress lines.
+            with log.open("w") as log_file:
+                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=log_file, text=True)
+                assert proc.stdout is not None
+                for line in proc.stdout:
+                    if line.startswith("out_time_us=") and progress and total:
+                        try:
+                            progress(max(0.0, min(1.0, int(line.split("=")[1]) / 1e6 / total)))
+                        except ValueError:
+                            pass
+                failed = proc.wait()
+            if not failed or "Unrecognized option 'filter_complex_script'" not in log.read_text(errors="replace"):
+                break
         if failed:
             raise MediaError(f"ffmpeg failed: {log.read_text(errors='replace').strip()[-400:]}")

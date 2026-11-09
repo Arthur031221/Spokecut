@@ -43,7 +43,7 @@ def test_otio_references_the_media_file():
     p, _, _ = planned(deleted=[3])
     doc = json.loads(export_project(p, VIDEO, "otio").text)
     ref = doc["tracks"]["children"][0]["children"][0]["media_references"]["DEFAULT_MEDIA"]
-    assert ref["target_url"] == "file:///media/talk.mp4"
+    assert ref["target_url"] == VIDEO.resolve().as_uri()
 
 
 def test_edl_reads_back_through_the_cmx3600_adapter(tmp_path):

@@ -1,6 +1,7 @@
 import json
 import re
 import subprocess
+import sys
 
 import pytest
 from conftest import needs_ffmpeg
@@ -85,3 +86,22 @@ def test_render_of_a_rotated_source_matches_the_probed_size(phone_video, tmp_pat
     render.render(phone_video, out, [(0.0, 2.0)], 30.0, True, None, "x264")
     media, _ = probe(out)
     assert (media.width, media.height) == (240, 320)
+
+
+def test_render_falls_back_when_ffmpeg_dropped_filter_complex_script(tmp_path, monkeypatch):
+    """ffmpeg 8 no longer knows -filter_complex_script; the same graph goes through -/filter_complex."""
+    seen = []
+    real_popen = subprocess.Popen
+
+    def popen(cmd, **kwargs):
+        seen.append(cmd)
+        code = "import sys; sys.stderr.write(\"Unrecognized option 'filter_complex_script'.\"); sys.exit(1)"
+        if "-filter_complex_script" not in cmd:
+            code = "pass"
+        return real_popen([sys.executable, "-c", code], **kwargs)
+
+    monkeypatch.setattr(render.subprocess, "Popen", popen)
+    render.render(tmp_path / "in.mp4", tmp_path / "out.mp4", [(0.0, 1.0)], 30.0, has_video=False)
+    assert "-filter_complex_script" in seen[0]
+    assert "-/filter_complex" in seen[1]
+    assert "-filter_complex_script" not in seen[1]

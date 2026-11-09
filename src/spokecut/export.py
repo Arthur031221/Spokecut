@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from fractions import Fraction
 from pathlib import Path
-from urllib.parse import quote
 from xml.sax.saxutils import quoteattr
 
 from .timecode import exact_fps, hour_frames, is_drop_frame, rational, timecode, to_frames
@@ -51,7 +50,7 @@ def to_fcpxml(segs: list[Segment], media, video_path: Path, name: str) -> str:
     fps = exact_fps(media.fps)
     frame_dur = rational(1, fps)
     total = to_frames(media.duration, fps)
-    src = "file://" + quote(str(video_path.resolve()))
+    src = video_path.resolve().as_uri()
     seq_len = sum(to_frames(s.src_end, fps) - to_frames(s.src_start, fps) for s in segs)
     clips = []
     for a, b, rec in _clips(segs, fps):
