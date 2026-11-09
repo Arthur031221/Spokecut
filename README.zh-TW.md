@@ -38,8 +38,8 @@
 <summary>Linux（NVIDIA GPU 或 CPU）</summary>
 
 ```sh
-sudo apt install ffmpeg
-pip install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
+sudo apt install ffmpeg pipx
+pipx install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
 spokecut doctor
 ```
 
@@ -51,8 +51,8 @@ spokecut doctor
 <summary>macOS（Apple Silicon 或 Intel）</summary>
 
 ```sh
-brew install ffmpeg
-pip install git+https://github.com/Arthur031221/Spokecut
+brew install ffmpeg pipx
+pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 

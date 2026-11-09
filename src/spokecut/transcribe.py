@@ -48,7 +48,7 @@ def cuda_status() -> tuple[bool, str]:
         try:
             ctypes.CDLL("libcublas.so.12")
         except OSError:
-            return False, "GPU found but cuBLAS is missing, install with: pip install 'spokecut[cuda]'"
+            return False, "GPU found but cuBLAS is missing, reinstall with the spokecut[cuda] extra, see docs/install.md"
     return True, ""
 
 

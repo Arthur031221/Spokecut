@@ -7,7 +7,7 @@ Spokecut has no config file. Everything is a flag, and your edits live in the pr
 | Flag | Default | Meaning |
 | --- | --- | --- |
 | `--host` | `127.0.0.1` | bind address |
-| `--port` | `8765` | port |
+| `--port` | `8765` | port. If it is taken, for example by another Spokecut, the next free one up to 20 higher is used and the printed link shows it |
 | `--no-open` | off | do not open a browser tab |
 | `--model` | `large-v3-turbo` on a GPU, `small` on a CPU | Whisper model name or a path |
 | `--language` | detect | spoken language code, such as `en` or `zh` |
@@ -24,7 +24,7 @@ Browser uploads go under `$XDG_DATA_HOME/spokecut/uploads` (`~/.local/share/spok
 
 | Flag | Command | Meaning |
 | --- | --- | --- |
-| `-o`, `--output` | clean, export | output file |
+| `-o`, `--output` | clean, export | output file. `clean` takes it with one input only |
 | `--format` | clean | `mp4` (default), `srt`, `vtt`, `ass`, `edl`, `fcpxml`, `otio`, `json` |
 | `--format` | export | the same list, required |
 | `--pauses SECONDS` | clean | shorten pauses at least this long |

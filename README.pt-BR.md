@@ -38,8 +38,8 @@ Ainda não está no PyPI, então instale pelo GitHub. Você também precisa de P
 <summary>Linux (GPU NVIDIA ou CPU)</summary>
 
 ```sh
-sudo apt install ffmpeg
-pip install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
+sudo apt install ffmpeg pipx
+pipx install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
 spokecut doctor
 ```
 
@@ -51,8 +51,8 @@ Tire o `[cuda]` para uma instalação só com CPU. A renderização usa NVENC qu
 <summary>macOS (Apple Silicon ou Intel)</summary>
 
 ```sh
-brew install ffmpeg
-pip install git+https://github.com/Arthur031221/Spokecut
+brew install ffmpeg pipx
+pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 

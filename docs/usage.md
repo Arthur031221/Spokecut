@@ -46,7 +46,7 @@ In the editor:
 ### Captions
 
 Pick a style (highlight, karaoke, pop, lower third, plain), a position, a size and the colours. The preview on the
-video is the same layout the render draws. Burn in is on by default for MP4 and has no effect on the other formats.
+video is the same layout the render draws, for portrait and phone video too: the frame follows the rotation flag. Burn in is on by default for MP4 and has no effect on the other formats.
 
 ### Export
 
@@ -70,7 +70,8 @@ spokecut clean talk.mp4 --pauses 0.7 --captions highlight --model large-v3
 spokecut export talk.mp4 --format srt
 ```
 
-`clean` marks fillers and repeats, shortens pauses of at least `--pauses` seconds down to `--keep` seconds
+`clean` takes several files, as in `spokecut clean *.mp4 --pauses 0.7`. It loads the model once, keeps going when
+one file fails, and exits with 1 if any did. `clean` marks fillers and repeats, shortens pauses of at least `--pauses` seconds down to `--keep` seconds
 (0.25 by default), and writes the result. It reuses `talk.mp4.spokecut.json` when it exists, so edits you made in
 the editor carry over. Pass `--retranscribe` to ignore it. `--model`, `--language` and `--device` only matter when there is no saved
 project yet, so use `--retranscribe` with them on a video you already opened. A new transcription keeps the old

@@ -38,8 +38,8 @@
 <summary>Linux (NVIDIA GPU 또는 CPU)</summary>
 
 ```sh
-sudo apt install ffmpeg
-pip install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
+sudo apt install ffmpeg pipx
+pipx install "spokecut[cuda] @ git+https://github.com/Arthur031221/Spokecut"
 spokecut doctor
 ```
 
@@ -51,8 +51,8 @@ CPU만 쓴다면 `[cuda]`를 빼세요. ffmpeg가 NVENC를 열 수 있으면 렌
 <summary>macOS (Apple Silicon 또는 Intel)</summary>
 
 ```sh
-brew install ffmpeg
-pip install git+https://github.com/Arthur031221/Spokecut
+brew install ffmpeg pipx
+pipx install git+https://github.com/Arthur031221/Spokecut
 spokecut doctor
 ```
 
