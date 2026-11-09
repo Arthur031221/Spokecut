@@ -1,0 +1,10 @@
+The demo video web/demo/clip.mp4 is an 80 second excerpt of
+"Ward Cunningham, Inventor of the Wiki" by Vgrigas, from Wikimedia Commons.
+Source: https://commons.wikimedia.org/wiki/File:Ward_Cunningham,_Inventor_of_the_Wiki.webm
+License: CC BY-SA 3.0, https://creativecommons.org/licenses/by-sa/3.0/
+
+Changes: cut from 73.9 s to 154.2 s of the original, scaled to 540p and re-encoded to H.264 and AAC.
+The words and timings in web/demo/project.json were produced by running Spokecut (Whisper large-v3) on the clip.
+
+Only the clip and its transcript are under CC BY-SA 3.0. The rest of this repository is under the MIT license.
+scripts/build_demo.py rebuilds both files from the source video.
