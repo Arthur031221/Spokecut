@@ -105,5 +105,18 @@
   "err.save": "Your last change was not saved: {message}",
   "err.export": "Export failed: {message}",
   "demo.banner": "Live demo. Edits stay in this browser. Install Spokecut to transcribe your own video and render MP4.",
-  "demo.install": "How to install"
+  "demo.install": "How to install",
+  "opt.summary": "Transcription options",
+  "opt.language": "Spoken language",
+  "opt.auto": "Detect it",
+  "opt.model": "Model",
+  "opt.modelDefault": "Default for this machine",
+  "opt.verbatim": "Keep ums and uhs (CrisperWhisper, non-commercial use only)",
+  "opt.note": "A video that already has a saved project opens as saved. These options apply to a new transcription.",
+  "redo.summary": "Transcribe again",
+  "redo.body": "Wrong language or too many mistakes? Pick other options and transcribe again. The words change, so the current edit is kept next to the video as a .bak file.",
+  "redo.start": "Transcribe again",
+  "redo.failed": "Could not transcribe again: {message}. Your edit is unchanged.",
+  "proc.back": "Back",
+  "stage.model": "Loading the model. The first run downloads it, which can take a few minutes"
 }

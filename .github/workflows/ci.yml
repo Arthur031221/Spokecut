@@ -24,6 +24,26 @@ jobs:
       - run: ruff format --check .
       - run: pytest -m "not slow and not e2e"
 
+  portable:
+    # Spokecut is used on Macs and Windows machines too, so run the unit tests there. The browser tests stay on Linux.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - if: runner.os == 'Windows'
+        run: choco install ffmpeg --no-progress -y
+      - run: pip install -e ".[dev]"
+      - run: pytest -m "not slow and not e2e"
+
   web:
     runs-on: ubuntu-latest
     steps:

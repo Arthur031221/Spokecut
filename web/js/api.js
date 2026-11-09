@@ -28,7 +28,7 @@ async function request(url, options = {}) {
   if (!res.ok) {
     let detail = res.statusText;
     try { detail = (await res.json()).detail ?? detail; } catch { /* body is not JSON */ }
-    throw new HttpError(res.status, detail);
+    throw new HttpError(res.status, typeof detail === "string" ? detail : res.statusText);
   }
   return res;
 }
@@ -40,7 +40,8 @@ export function serverApi(info) {
     mode: "server",
     info,
     list: async () => (await request("/api/projects")).json(),
-    open: async (path) => (await request("/api/open", json({ path }))).json(),
+    open: async (path, options = {}) => (await request("/api/open", json({ path, ...options }))).json(),
+    analyze: async (id, options = {}) => (await request(`/api/projects/${id}/analyze`, json(options))).json(),
     get: async (id) => {
       const body = await (await request(`/api/projects/${id}`)).json();
       if (body.project) body.project = normalize(body.project);
@@ -53,10 +54,14 @@ export function serverApi(info) {
     render: async (id, encoder = "auto") => (await request(`/api/projects/${id}/render`, json({ encoder }))).json(),
     job: async (id) => (await request(`/api/jobs/${id}`)).json(),
     jobFileUrl: (id) => `/api/jobs/${id}/file`,
-    upload(file, onProgress) {
+    upload(file, onProgress, options = {}) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", `/api/upload?name=${encodeURIComponent(file.name)}`);
+        const query = new URLSearchParams({ name: file.name });
+        if (options.model) query.set("model", options.model);
+        if (options.language) query.set("language", options.language);
+        if ("verbatim" in options) query.set("verbatim", options.verbatim ? "1" : "0");
+        xhr.open("POST", `/api/upload?${query}`);
         xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
         xhr.onload = () => {
           if (xhr.status < 300) return resolve(JSON.parse(xhr.responseText));

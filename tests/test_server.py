@@ -273,3 +273,68 @@ def test_overlapping_saves_do_not_freeze_the_server(client, video, monkeypatch):
     # A thread of its own, because the browser tests leave an event loop running in this one.
     with ThreadPoolExecutor(1) as pool:
         assert pool.submit(asyncio.run, put_three()).result(timeout=10) == [204, 204, 204]
+
+
+def test_errors_are_json_with_a_detail_the_editor_can_show(client, tmp_path):
+    missing = client.post("/api/open", json={"path": str(tmp_path / "gone.mp4")})
+    assert missing.status_code == 404
+    assert missing.headers["content-type"].startswith("application/json")
+    assert "no such file" in missing.json()["detail"]
+    bare = TestClient(client.app, base_url="http://localhost")
+    assert "Open the address Spokecut printed" in bare.get("/api/projects").json()["detail"]
+    assert client.get("/api/projects/nope").json() == {"detail": "no such project"}
+
+
+def test_the_editor_picks_model_language_and_verbatim_for_an_open(client, video, monkeypatch):
+    seen = {}
+
+    def spy(video, model=None, language=None, device="auto", verbatim=False, progress=None, proxy_dir=None):
+        seen.update(model=model, language=language, verbatim=verbatim)
+        return fake_analyze(video, model, language, device, verbatim, progress, proxy_dir)
+
+    monkeypatch.setattr(server, "analyze", spy)
+    r = client.post("/api/open", json={"path": str(video), "model": "medium", "language": "ja", "verbatim": True})
+    wait(client, r.json()["id"])
+    assert seen == {"model": "medium", "language": "ja", "verbatim": True}
+
+
+def test_an_upload_carries_the_same_options(client, monkeypatch):
+    seen = {}
+
+    def spy(video, model=None, language=None, device="auto", verbatim=False, progress=None, proxy_dir=None):
+        seen.update(model=model, language=language, verbatim=verbatim)
+        return fake_analyze(video, model, language, device, verbatim, progress, proxy_dir)
+
+    monkeypatch.setattr(server, "analyze", spy)
+    r = client.post("/api/upload?name=a.mp4&model=base&language=zh&verbatim=1", content=b"bytes" * 50)
+    wait(client, r.json()["id"])
+    assert seen == {"model": "base", "language": "zh", "verbatim": True}
+
+
+def test_model_and_language_are_checked(client, video):
+    for body in ({"model": "../../etc/passwd"}, {"model": "gpt"}, {"language": "english"}, {"language": "e"}):
+        r = client.post("/api/open", json={"path": str(video), **body})
+        assert r.status_code == 422, body
+    assert client.post("/api/upload?name=a.mp4&model=nope", content=b"x").status_code == 422
+    pid = open_video(client, video)
+    wait(client, pid)
+    assert client.post(f"/api/projects/{pid}/analyze", json={"language": "xx1"}).status_code == 422
+
+
+def test_a_failed_second_transcription_keeps_the_first_one(client, video, monkeypatch):
+    pid = open_video(client, video)
+    wait(client, pid)
+    client.put(f"/api/projects/{pid}/state", json={"deleted": [2]})
+
+    def boom(*a, **k):
+        raise RuntimeError("out of memory")
+
+    monkeypatch.setattr(server, "analyze", boom)
+    job = client.post(f"/api/projects/{pid}/analyze", json={"model": "large-v3"}).json()
+    end = time.time() + 5
+    while time.time() < end and client.get(f"/api/jobs/{job['id']}").json()["status"] not in ("done", "error"):
+        time.sleep(0.02)
+    assert client.get(f"/api/jobs/{job['id']}").json()["error"] == "out of memory"
+    body = client.get(f"/api/projects/{pid}").json()
+    assert body["status"] == "ready"
+    assert body["project"]["state"]["deleted"] == [2]

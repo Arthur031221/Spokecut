@@ -81,7 +81,7 @@ La primera transcripción descarga el modelo de Whisper: unos 1,6 GB para `large
 spokecut talk.mp4
 ```
 
-Esto abre el editor en el navegador. Haz clic en una palabra y pulsa Supr para cortarla, arrastra para cortar una frase, haz clic en una etiqueta gris para cortar una pausa y pulsa Intro sobre una palabra para corregir un subtítulo. Pulsa Ctrl+F para buscar una palabra o frase y cortar todas las coincidencias de una vez. La reproducción salta lo que cortaste. La edición se guarda junto al vídeo como `talk.mp4.spokecut.json` y el vídeo en sí nunca cambia.
+Esto abre el editor en el navegador. Haz clic en una palabra y pulsa Supr para cortarla, arrastra para cortar una frase, haz clic en una etiqueta gris para cortar una pausa y pulsa Intro sobre una palabra para corregir un subtítulo. Pulsa Ctrl+F para buscar una palabra o frase y cortar todas las coincidencias de una vez. La reproducción salta lo que cortaste. La edición se guarda junto al vídeo como `talk.mp4.spokecut.json` y el vídeo en sí nunca cambia. El idioma, el modelo y la opción de conservar los eh están en Opciones de transcripción, y Transcribir de nuevo repite un vídeo cuyo idioma se detectó mal.
 
 Para el caso habitual no hace falta el navegador:
 

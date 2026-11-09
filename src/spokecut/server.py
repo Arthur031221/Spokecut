@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import secrets
 import urllib.parse
 import uuid
@@ -30,6 +31,24 @@ from .workspace import Entry, Workspace
 MAX_UPLOAD = 8 << 30  # 8 GiB: talking-head recordings are big, and the file stays on this machine
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "[::1]", "::1"}
 COOKIE = "spokecut_token"
+LANGUAGE = re.compile(r"^[a-z]{2,3}$")
+
+
+def check_options(model: object, language: object) -> tuple[str | None, str | None]:
+    """The model and language a browser asked for, or a 422 when they are not something Spokecut offers."""
+    model = model or None
+    language = language or None
+    if model is not None and model not in transcribe.WHISPER_MODELS:
+        raise HTTPException(422, f"model must be one of {', '.join(transcribe.WHISPER_MODELS)}")
+    if language is not None and not (isinstance(language, str) and LANGUAGE.match(language)):
+        raise HTTPException(422, "language must be a code such as en or zh")
+    return model, language
+
+
+def error_response(request: Request, exc: Exception) -> Response:
+    """Errors as JSON with a `detail`, which is what the editor reads to tell the user what went wrong."""
+    assert isinstance(exc, HTTPException)
+    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code, headers=exc.headers)
 
 
 @dataclass
@@ -120,7 +139,9 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
                 )
                 entry.status, entry.error = "ready", ""
             except Exception as exc:
-                entry.status, entry.error = "error", str(exc) or exc.__class__.__name__
+                # A failed second transcription leaves the first one, and its edit, where it was.
+                entry.status = "ready" if entry.project is not None else "error"
+                entry.error = str(exc) or exc.__class__.__name__
                 raise
 
         entry.status, entry.error = "analyzing", ""
@@ -128,11 +149,13 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
         entry.job_id = job.id
         return job
 
-    def open_video(video: Path) -> Entry:
+    def open_video(
+        video: Path, model: str | None = None, language: str | None = None, verbatim: bool | None = None
+    ) -> Entry:
         """Register a video and start transcribing it unless a sidecar already holds the transcript."""
         entry = workspace.open(video)
         if entry.status == "new" or (entry.status == "error" and jobs and not jobs.active(entry.id)):
-            start_analysis(entry, None, None, config.verbatim)
+            start_analysis(entry, model, language, config.verbatim if verbatim is None else verbatim)
         return entry
 
     def entry_response(entry: Entry) -> Response:
@@ -170,8 +193,10 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
         guard(request)
         body = await request.json()
         path = Path(str(body.get("path", ""))).expanduser()
+        model, language = check_options(body.get("model"), body.get("language"))
+        verbatim = bool(body["verbatim"]) if "verbatim" in body else None
         try:
-            entry = await run_in_threadpool(open_video, path)
+            entry = await run_in_threadpool(open_video, path, model, language, verbatim)
         except FileNotFoundError as exc:
             raise HTTPException(404, str(exc)) from exc
         return entry_response(entry)
@@ -179,6 +204,8 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
     async def upload(request: Request) -> Response:
         guard(request)
         name = request.query_params.get("name", "video.mp4")
+        model, language = check_options(request.query_params.get("model"), request.query_params.get("language"))
+        verbatim = request.query_params.get("verbatim") == "1" if "verbatim" in request.query_params else None
         workspace.upload_dir.mkdir(parents=True, exist_ok=True)
         tmp = workspace.upload_dir / f".upload-{uuid.uuid4().hex}"
         digest, size = hashlib.sha1(), 0
@@ -197,7 +224,7 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
                 tmp.replace(target)
         finally:
             tmp.unlink(missing_ok=True)
-        return entry_response(await run_in_threadpool(open_video, target))
+        return entry_response(await run_in_threadpool(open_video, target, model, language, verbatim))
 
     async def get_project(request: Request) -> Response:
         guard(request)
@@ -212,7 +239,8 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
         guard(request)
         entry = entry_or_404(request.path_params["project_id"])
         body = await request.json() if await request.body() else {}
-        job = start_analysis(entry, body.get("model"), body.get("language"), bool(body.get("verbatim", False)))
+        model, language = check_options(body.get("model"), body.get("language"))
+        job = start_analysis(entry, model, language, bool(body.get("verbatim", False)))
         return JSONResponse(job.to_json(), status_code=202)
 
     async def put_state(request: Request) -> Response:
@@ -308,7 +336,11 @@ def create_app(config: Config | None = None, workspace: Workspace | None = None)
         Route("/api/jobs/{job_id}/file", job_file, methods=["GET"]),
         Mount("/", StaticFiles(directory=root, html=True), name="web"),
     ]
-    app = Starlette(routes=routes, middleware=[Middleware(LocalOnly, extra_hosts=config.extra_hosts)])
+    app = Starlette(
+        routes=routes,
+        middleware=[Middleware(LocalOnly, extra_hosts=config.extra_hosts)],
+        exception_handlers={HTTPException: error_response},
+    )
     app.state.token, app.state.workspace, app.state.jobs = token, workspace, jobs
     app.state.open_video = open_video
     return app

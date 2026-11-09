@@ -6,6 +6,7 @@ import { CaptionPanel, Cleanup, ExportPanel } from "./panels.js";
 import { Player, clock } from "./player.js";
 import { Store } from "./store.js";
 import { Transcript } from "./transcript.js";
+import { TxOptions } from "./txoptions.js";
 import { outputDuration } from "./timeline.js";
 import { Waveform } from "./waveform.js";
 
@@ -14,6 +15,7 @@ const VIEWS = ["empty", "processing", "editor"];
 const SAVE_DELAY = 400;
 
 const store = new Store();
+const txOptions = new TxOptions();
 let api;
 let current = null; // { id, name }
 let saveTimer = 0;
@@ -116,6 +118,7 @@ function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 async function openProject(id) {
   show("processing");
   $("proc-error").hidden = true;
+  $("proc-back").hidden = true;
   let info = await api.get(id);
   while (info.status === "analyzing" || info.status === "new") {
     const job = info.job;
@@ -130,6 +133,7 @@ async function openProject(id) {
     $("proc-title").textContent = info.name;
     $("proc-error").textContent = t("err.analyze", { message: info.error });
     $("proc-error").hidden = false;
+    $("proc-back").hidden = false;
     return;
   }
   current = { id: info.id, name: info.name };
@@ -148,7 +152,7 @@ async function openProject(id) {
 }
 
 async function openPath(path) {
-  const info = await api.open(path);
+  const info = await api.open(path, txOptions.request());
   await refreshProjects(info.id);
   await openProject(info.id);
 }
@@ -156,13 +160,14 @@ async function openPath(path) {
 async function uploadFile(file) {
   show("processing");
   $("proc-error").hidden = true;
+  $("proc-back").hidden = true;
   $("proc-title").textContent = t("proc.uploading", { name: file.name });
   $("proc-stage").textContent = "";
   try {
     const info = await api.upload(file, (f) => {
       $("proc-bar").style.width = `${Math.round(f * 100)}%`;
       $("proc-stage").textContent = `${Math.round(f * 100)}%`;
-    });
+    }, txOptions.request());
     await refreshProjects(info.id);
     await openProject(info.id);
   } catch (err) {
@@ -184,6 +189,37 @@ async function refreshProjects(selected) {
   select.replaceChildren(...list.map((p) => Object.assign(document.createElement("option"), { value: p.id, textContent: p.name })));
   if (selected) select.value = selected;
   $("project-picker").hidden = list.length < 2;
+}
+
+/** Transcribe the open video again with the options in the panel. A failure leaves the old transcript and edit as they were. */
+async function retranscribe() {
+  if (!current) return;
+  const { id } = current;
+  $("retx-start").disabled = true;
+  try {
+    await flush();
+    const job = await api.analyze(id, txOptions.request());
+    let info = await api.get(id);
+    while (info.status === "analyzing" || info.job?.id === job.id && ["queued", "running"].includes(info.job.status)) {
+      show("processing");
+      $("proc-error").hidden = true;
+      $("proc-back").hidden = true;
+      const pct = Math.round((info.job?.progress ?? 0) * 100);
+      $("proc-title").textContent = t("proc.title", { name: info.name });
+      $("proc-stage").textContent = info.job ? t(`stage.${info.job.stage}`, { pct }) : t("stage.queued");
+      $("proc-bar").style.width = `${pct}%`;
+      await sleep(700);
+      info = await api.get(id);
+    }
+    if (info.job?.id === job.id && info.job.status === "error") toast(t("redo.failed", { message: info.job.error }));
+    $("retx").open = false;
+    await openProject(id);
+  } catch (err) {
+    toast(t("redo.failed", { message: err.message }));
+    show("editor");
+  } finally {
+    $("retx-start").disabled = false;
+  }
 }
 
 function pickFile() { $("file-input").click(); }
@@ -215,6 +251,8 @@ function wireEmpty() {
     if (file && api.mode === "server") uploadFile(file);
   });
   $("project-select").addEventListener("change", (e) => openProject(e.target.value));
+  $("proc-back").addEventListener("click", () => show("empty"));
+  $("retx-start").addEventListener("click", retranscribe);
 }
 
 function wireControls() {
@@ -268,6 +306,7 @@ function fillLanguages() {
 
 function retranslate() {
   $("lang-select").value = locale();
+  txOptions.paint();
   if (store.project) { paint(); cleanup.build(); cleanup.paint(); transcript.paint(); }
   exportPanel?.paint();
   const key = $("save-state").dataset.key;
@@ -287,6 +326,13 @@ async function main() {
   wireControls();
   api = await detect();
   exportPanel = new ExportPanel(store, api, flush, toast);
+  if (api.mode === "server") {
+    txOptions.mount($("empty-options"), $("tx-fields"));
+    txOptions.mount($("retx-options"), $("tx-fields"));
+    $("retx").hidden = false;
+  } else {
+    document.querySelector("#empty .options").hidden = true;
+  }
   retranslate();
   apply(document);
 

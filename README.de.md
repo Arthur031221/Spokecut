@@ -81,7 +81,7 @@ Die erste Transkription lädt das Whisper-Modell herunter, etwa 1,6 GB für `lar
 spokecut talk.mp4
 ```
 
-Das öffnet den Editor im Browser. Klicke ein Wort an und drücke Entf, um es zu schneiden, ziehe über mehrere Wörter, um eine Passage zu schneiden, klicke einen grauen Chip, um eine Pause zu schneiden, und drücke Enter auf einem Wort, um einen Untertitel zu korrigieren. Mit Strg+F suchst du ein Wort oder eine Wendung und schneidest alle Treffer auf einmal. Die Wiedergabe überspringt, was du geschnitten hast. Der Schnitt wird neben dem Video als `talk.mp4.spokecut.json` gespeichert, und das Video selbst wird nie verändert.
+Das öffnet den Editor im Browser. Klicke ein Wort an und drücke Entf, um es zu schneiden, ziehe über mehrere Wörter, um eine Passage zu schneiden, klicke einen grauen Chip, um eine Pause zu schneiden, und drücke Enter auf einem Wort, um einen Untertitel zu korrigieren. Mit Strg+F suchst du ein Wort oder eine Wendung und schneidest alle Treffer auf einmal. Die Wiedergabe überspringt, was du geschnitten hast. Der Schnitt wird neben dem Video als `talk.mp4.spokecut.json` gespeichert, und das Video selbst wird nie verändert. Sprache, Modell und die Option, Äh und Ähm zu behalten, stehen unter Transkriptionsoptionen, und Erneut transkribieren wiederholt ein Video, dessen Sprache falsch erkannt wurde.
 
 Für den häufigen Fall brauchst du keinen Browser:
 

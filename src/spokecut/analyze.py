@@ -27,6 +27,8 @@ def analyze(
     say("decode", 0.0)
     samples = audio.decode_audio(video)
     model_name = model or transcribe.default_model(transcribe.has_cuda() if device == "auto" else device == "cuda")
+    say("model", 0.0)  # the first run downloads the model here, which can take minutes
+    transcribe.load_model(transcribe.VERBATIM_MODEL if verbatim else model_name, device)
     say("transcribe", 0.0)
     words, lang = transcribe.transcribe(samples, model_name, language, device, verbatim, lambda f: say("transcribe", f))
     say("snap", 0.0)

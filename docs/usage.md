@@ -25,6 +25,11 @@ In the editor:
   Shift + Enter to the previous one. The Cut button cuts every match at once, and a second press brings them back.
   Case and punctuation don't matter, and a match is always whole words.
 - The cleanup box marks fillers, repeats and pauses in one click. Each button has arrows to step through the hits.
+- Under Transcription options on the first screen you can set the spoken language, the Whisper model and whether to
+  keep ums and uhs (`--verbatim`) before you open a video. Wrong language, or too many mistakes? Open Transcribe
+  again under the transcript, pick other options and run it again. The words change, so the edit you had is kept
+  next to the video as `talk.mp4.spokecut.json.bak`, and if the new run fails the old transcript stays open. The
+  first run of a model downloads it, and the progress page says so while it loads.
 - Undo and redo cover every change. Changes are saved a moment after you make them.
 
 ### Keyboard

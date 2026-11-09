@@ -81,7 +81,7 @@ La première transcription télécharge le modèle Whisper : environ 1,6 Go pour
 spokecut talk.mp4
 ```
 
-Cela ouvre l'éditeur dans votre navigateur. Cliquez sur un mot et appuyez sur Suppr pour le couper, faites glisser pour couper une phrase, cliquez sur une pastille grise pour couper une pause, et appuyez sur Entrée sur un mot pour corriger un sous-titre. Appuyez sur Ctrl+F pour chercher un mot ou une phrase et couper toutes les occurrences d'un coup. La lecture saute ce que vous avez coupé. Le montage est enregistré à côté de la vidéo sous `talk.mp4.spokecut.json`, et la vidéo elle-même n'est jamais modifiée.
+Cela ouvre l'éditeur dans votre navigateur. Cliquez sur un mot et appuyez sur Suppr pour le couper, faites glisser pour couper une phrase, cliquez sur une pastille grise pour couper une pause, et appuyez sur Entrée sur un mot pour corriger un sous-titre. Appuyez sur Ctrl+F pour chercher un mot ou une phrase et couper toutes les occurrences d'un coup. La lecture saute ce que vous avez coupé. Le montage est enregistré à côté de la vidéo sous `talk.mp4.spokecut.json`, et la vidéo elle-même n'est jamais modifiée. La langue, le modèle et l'option qui garde les euh sont dans Options de transcription, et Transcrire à nouveau refait une vidéo dont la langue a été mal détectée.
 
 Pas besoin de navigateur dans le cas courant :
 

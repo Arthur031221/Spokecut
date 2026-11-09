@@ -81,7 +81,7 @@ A primeira transcrição baixa o modelo Whisper: cerca de 1,6 GB para o `large-v
 spokecut talk.mp4
 ```
 
-Isso abre o editor no navegador. Clique numa palavra e aperte Delete para cortá-la, arraste para cortar um trecho, clique num chip cinza para cortar uma pausa e aperte Enter numa palavra para corrigir uma legenda. Aperte Ctrl+F para buscar uma palavra ou frase e cortar todas as ocorrências de uma vez. A reprodução pula o que você cortou. A edição é salva ao lado do vídeo como `talk.mp4.spokecut.json`, e o vídeo em si nunca é alterado.
+Isso abre o editor no navegador. Clique numa palavra e aperte Delete para cortá-la, arraste para cortar um trecho, clique num chip cinza para cortar uma pausa e aperte Enter numa palavra para corrigir uma legenda. Aperte Ctrl+F para buscar uma palavra ou frase e cortar todas as ocorrências de uma vez. A reprodução pula o que você cortou. A edição é salva ao lado do vídeo como `talk.mp4.spokecut.json`, e o vídeo em si nunca é alterado. O idioma, o modelo e a opção de manter os hum estão em Opções de transcrição, e Transcrever de novo refaz um vídeo cujo idioma foi detectado errado.
 
 No caso comum você não precisa do navegador:
 

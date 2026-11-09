@@ -94,3 +94,56 @@ def test_render_from_the_ui_matches_the_duration_on_screen(page, server_url, cli
     )  # fmt: skip
     assert abs(float(probe.stdout) - expected) <= 1.0
     assert page.inner_text("#render-text").startswith("Done")
+
+
+def test_options_chosen_before_the_upload_reach_the_transcriber(page, server_url, clip, analysis_calls):
+    sign_in(page, server_url)
+    page.click("#empty summary")
+    page.select_option("#empty-options .tx-language", "ja")
+    page.select_option("#empty-options .tx-model", "medium")
+    page.check("#empty-options .tx-verbatim")
+    page.set_input_files("#file-input", str(clip))
+    page.wait_for_selector("#editor:not([hidden])", timeout=60000)
+    assert analysis_calls == [{"video": "talk.mp4", "model": "medium", "language": "ja", "verbatim": True}]
+    assert page.problems == []
+
+
+def test_transcribe_again_from_the_editor_with_other_options(page, server_url, clip, analysis_calls):
+    sign_in(page, server_url)
+    page.set_input_files("#file-input", str(clip))
+    page.wait_for_selector("#editor:not([hidden])", timeout=60000)
+    page.locator('.w[data-i="4"]').click()
+    page.keyboard.press("Delete")
+    page.wait_for_function("document.getElementById('save-state').textContent === 'Saved'")
+
+    page.click("#retx summary")
+    page.select_option("#retx-options .tx-language", "de")
+    page.click("#retx-start")
+    page.wait_for_function("document.querySelectorAll('#retx-start:not([disabled])').length === 1")
+    page.wait_for_selector("#editor:not([hidden])", timeout=30000)
+    assert len(analysis_calls) == 2
+    assert analysis_calls[1]["language"] == "de" and analysis_calls[1]["verbatim"] is False
+    # The choice follows to the next page load, and the empty screen shows the same one.
+    page.reload()
+    page.wait_for_selector("#editor:not([hidden])", timeout=15000)
+    assert page.input_value("#empty-options .tx-language") == "de"
+    assert page.problems == []
+
+
+def test_a_failed_transcription_says_why_and_goes_back(page, server_url, clip, tmp_path):
+    broken = tmp_path / "broken.mp4"
+    shutil.copy(clip, broken)
+    sign_in(page, server_url)
+    page.set_input_files("#file-input", str(broken))
+    page.wait_for_selector("#proc-error:not([hidden])", timeout=30000)
+    assert "the model could not be loaded" in page.inner_text("#proc-error")
+    page.click("#proc-back")
+    page.wait_for_selector("#empty:not([hidden])")
+
+
+def test_a_missing_file_is_explained_not_called_not_found(page, server_url, tmp_path):
+    sign_in(page, server_url)
+    page.fill("#path-input", str(tmp_path / "gone.mp4"))
+    page.click("#path-form button")
+    page.wait_for_selector("#empty-error:not([hidden])")
+    assert "no such file" in page.inner_text("#empty-error")

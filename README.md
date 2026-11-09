@@ -81,7 +81,7 @@ The first transcription downloads the Whisper model, about 1.6 GB for `large-v3-
 spokecut talk.mp4
 ```
 
-This opens the editor in your browser. Click a word and press Delete to cut it, drag to cut a phrase, click a gray chip to cut a pause, and press Enter on a word to fix a caption. Press Ctrl+F to find a word or phrase and cut every match at once. Playback skips what you cut. The edit is saved next to the video as `talk.mp4.spokecut.json`, and the video itself is never changed.
+This opens the editor in your browser. Click a word and press Delete to cut it, drag to cut a phrase, click a gray chip to cut a pause, and press Enter on a word to fix a caption. Press Ctrl+F to find a word or phrase and cut every match at once. Playback skips what you cut. The edit is saved next to the video as `talk.mp4.spokecut.json`, and the video itself is never changed. Language, model and the ums-and-uhs option are under Transcription options, and Transcribe again redoes a video whose language was detected wrong.
 
 You don't need a browser for the common case:
 

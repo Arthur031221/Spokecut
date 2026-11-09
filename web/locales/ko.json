@@ -105,5 +105,18 @@
   "err.save": "마지막 변경을 저장하지 못했습니다: {message}",
   "err.export": "내보내기에 실패했습니다: {message}",
   "demo.banner": "라이브 데모입니다. 편집 내용은 이 브라우저에만 남습니다. Spokecut을 설치하면 내 영상을 받아쓰고 MP4로 내보낼 수 있습니다.",
-  "demo.install": "설치 방법"
+  "demo.install": "설치 방법",
+  "opt.summary": "받아쓰기 옵션",
+  "opt.language": "말하는 언어",
+  "opt.auto": "자동 감지",
+  "opt.model": "모델",
+  "opt.modelDefault": "이 컴퓨터의 기본값",
+  "opt.verbatim": "음, 어도 남기기 (CrisperWhisper, 비상업적 용도만)",
+  "opt.note": "저장된 프로젝트가 있는 영상은 저장된 그대로 열립니다. 이 옵션은 새 받아쓰기에만 적용됩니다.",
+  "redo.summary": "다시 받아쓰기",
+  "redo.body": "언어가 틀렸거나 오류가 많나요? 다른 옵션으로 다시 받아쓸 수 있습니다. 단어가 바뀌므로 현재 편집은 영상 옆에 .bak 파일로 남습니다.",
+  "redo.start": "다시 받아쓰기",
+  "redo.failed": "다시 받아쓰지 못했습니다: {message}. 편집은 그대로입니다.",
+  "proc.back": "뒤로",
+  "stage.model": "모델을 불러오는 중입니다. 처음 실행하면 내려받느라 몇 분 걸릴 수 있습니다"
 }

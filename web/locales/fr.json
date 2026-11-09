@@ -105,5 +105,18 @@
   "err.save": "Votre dernière modification n'a pas été enregistrée : {message}",
   "err.export": "L'export a échoué : {message}",
   "demo.banner": "Démo en ligne. Les modifications restent dans ce navigateur. Installez Spokecut pour transcrire votre propre vidéo et générer un MP4.",
-  "demo.install": "Comment l'installer"
+  "demo.install": "Comment l'installer",
+  "opt.summary": "Options de transcription",
+  "opt.language": "Langue parlée",
+  "opt.auto": "La détecter",
+  "opt.model": "Modèle",
+  "opt.modelDefault": "Par défaut sur cette machine",
+  "opt.verbatim": "Garder les euh et les hum (CrisperWhisper, usage non commercial uniquement)",
+  "opt.note": "Une vidéo qui a déjà un projet enregistré s'ouvre telle quelle. Ces options valent pour une nouvelle transcription.",
+  "redo.summary": "Transcrire à nouveau",
+  "redo.body": "Mauvaise langue ou trop d'erreurs ? Choisissez d'autres options et transcrivez à nouveau. Les mots changent, donc le montage actuel reste à côté de la vidéo dans un fichier .bak.",
+  "redo.start": "Transcrire à nouveau",
+  "redo.failed": "Impossible de transcrire à nouveau : {message}. Votre montage n'a pas changé.",
+  "proc.back": "Retour",
+  "stage.model": "Chargement du modèle. Au premier lancement il est téléchargé, ce qui peut prendre quelques minutes"
 }

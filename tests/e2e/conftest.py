@@ -56,9 +56,18 @@ def demo_project() -> dict:
 
 
 @pytest.fixture
-def server_url(tmp_path, monkeypatch, demo_project):
+def analysis_calls() -> list[dict]:
+    """The options every transcription was started with."""
+    return []
+
+
+@pytest.fixture
+def server_url(tmp_path, monkeypatch, demo_project, analysis_calls):
     def fake_analyze(video, model=None, language=None, device="auto", verbatim=False, progress=None, proxy_dir=None):
         """The demo transcript for whatever was uploaded, so the browser sees real data without Whisper."""
+        analysis_calls.append({"video": video.name, "model": model, "language": language, "verbatim": verbatim})
+        if video.name.startswith("broken"):
+            raise RuntimeError("the model could not be loaded")
         data = json.loads(json.dumps(demo_project))
         data["media"]["file"] = video.name
         project = Project.from_json(data)

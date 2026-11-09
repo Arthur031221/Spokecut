@@ -16,6 +16,8 @@ from .project import Word
 from .snap import GRID, SAMPLE_RATE, energy_grid
 
 VERBATIM_MODEL = "nyrahealth/faster_CrisperWhisper"
+# What the editor offers. Anything else has to come from the command line, where a path or a Hugging Face id works.
+WHISPER_MODELS = ("tiny", "base", "small", "medium", "large-v3-turbo", "large-v3")
 VERBATIM_LICENSE = "CC BY-NC 4.0 (non-commercial use only)"
 # Whisper drops ums unless it is shown some. Helps a little, never fully.
 DISFLUENCY_PROMPT = "Umm, let me think like, hmm... Okay, here's what I'm, like, thinking. Uh, so, you know, yeah."

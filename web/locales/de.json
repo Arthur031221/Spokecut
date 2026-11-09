@@ -105,5 +105,18 @@
   "err.save": "Deine letzte Änderung wurde nicht gespeichert: {message}",
   "err.export": "Der Export ist fehlgeschlagen: {message}",
   "demo.banner": "Live-Demo. Änderungen bleiben in diesem Browser. Installiere Spokecut, um dein eigenes Video zu transkribieren und als MP4 zu rendern.",
-  "demo.install": "So wird es installiert"
+  "demo.install": "So wird es installiert",
+  "opt.summary": "Transkriptionsoptionen",
+  "opt.language": "Gesprochene Sprache",
+  "opt.auto": "Automatisch erkennen",
+  "opt.model": "Modell",
+  "opt.modelDefault": "Standard für diesen Rechner",
+  "opt.verbatim": "Äh und Ähm behalten (CrisperWhisper, nur nicht kommerziell)",
+  "opt.note": "Ein Video mit gespeichertem Projekt wird so geöffnet, wie es gespeichert ist. Diese Optionen gelten für eine neue Transkription.",
+  "redo.summary": "Erneut transkribieren",
+  "redo.body": "Falsche Sprache oder zu viele Fehler? Wähle andere Optionen und transkribiere erneut. Die Wörter ändern sich, deshalb bleibt der aktuelle Schnitt als .bak-Datei neben dem Video erhalten.",
+  "redo.start": "Erneut transkribieren",
+  "redo.failed": "Erneutes Transkribieren fehlgeschlagen: {message}. Dein Schnitt ist unverändert.",
+  "proc.back": "Zurück",
+  "stage.model": "Modell wird geladen. Beim ersten Start wird es heruntergeladen, das kann einige Minuten dauern"
 }

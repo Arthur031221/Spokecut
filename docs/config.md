@@ -14,6 +14,8 @@ Spokecut has no config file. Everything is a flag, and your edits live in the pr
 | `--device` | `auto` | `auto`, `cuda` or `cpu` |
 | `--verbatim` | off | use CrisperWhisper, which keeps ums and uhs. Non-commercial license |
 
+A model or language picked in the editor applies to that video and wins over these flags. The editor offers `tiny`, `base`, `small`, `medium`, `large-v3-turbo` and `large-v3`, and 19 languages. For any other model, such as a path or a Hugging Face id, use `--model`.
+
 The server prints a link with a random token in it. Opening the link sets a cookie, and every request to `/api` except `/api/health` needs that cookie or an `X-Spokecut-Token` header. The server also rejects any request whose Host or Origin isn't local, which blocks DNS rebinding and uploads from other websites. If you pass another `--host`, that address is accepted as a Host too. There's no login, so only do that on a network you trust, or use an SSH tunnel. `--host 0.0.0.0` is refused because Spokecut can read and write your files.
 
 Browser uploads go under `$XDG_DATA_HOME/spokecut/uploads` (`~/.local/share/spokecut/uploads` by default), in a folder named after a hash of the file. Drop the same file twice under the same name and it's kept once. The limit is 8 GiB.

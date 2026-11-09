@@ -105,5 +105,18 @@
   "err.save": "No se guardó tu último cambio: {message}",
   "err.export": "Falló la exportación: {message}",
   "demo.banner": "Demo en vivo. Las ediciones se quedan en este navegador. Instala Spokecut para transcribir tu propio vídeo y renderizar MP4.",
-  "demo.install": "Cómo instalarlo"
+  "demo.install": "Cómo instalarlo",
+  "opt.summary": "Opciones de transcripción",
+  "opt.language": "Idioma hablado",
+  "opt.auto": "Detectarlo",
+  "opt.model": "Modelo",
+  "opt.modelDefault": "Predeterminado de este equipo",
+  "opt.verbatim": "Conservar los eh y los mm (CrisperWhisper, solo uso no comercial)",
+  "opt.note": "Un vídeo que ya tiene un proyecto guardado se abre tal como está. Estas opciones se aplican a una transcripción nueva.",
+  "redo.summary": "Transcribir de nuevo",
+  "redo.body": "¿Idioma equivocado o demasiados errores? Elige otras opciones y transcribe de nuevo. Las palabras cambian, así que la edición actual se guarda junto al vídeo como archivo .bak.",
+  "redo.start": "Transcribir de nuevo",
+  "redo.failed": "No se pudo transcribir de nuevo: {message}. Tu edición no ha cambiado.",
+  "proc.back": "Volver",
+  "stage.model": "Cargando el modelo. La primera vez se descarga y puede tardar unos minutos"
 }

@@ -60,6 +60,11 @@
           <input id="path-input" type="text" spellcheck="false" autocomplete="off" data-i18n-placeholder="empty.pathPlaceholder" placeholder="/home/you/talk.mp4">
           <button class="btn" type="submit" data-i18n="empty.open">Open</button>
         </form>
+        <details class="options">
+          <summary data-i18n="opt.summary">Transcription options</summary>
+          <div id="empty-options"></div>
+          <p class="hint small muted" data-i18n="opt.note">A video that already has a saved project opens as saved. These options apply to a new transcription.</p>
+        </details>
         <p id="empty-error" class="error" role="alert" hidden></p>
       </div>
     </section>
@@ -69,6 +74,7 @@
       <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div id="proc-bar"></div></div>
       <p id="proc-stage" class="muted"></p>
       <p id="proc-error" class="error" role="alert" hidden></p>
+      <button id="proc-back" class="btn" type="button" hidden data-i18n="proc.back">Back</button>
     </section>
 
     <section id="editor" class="editor" hidden>
@@ -138,6 +144,12 @@
           <div id="transcript" class="transcript" tabindex="0" role="textbox" aria-readonly="true" aria-multiline="true" data-i18n-aria="tx.label" aria-label="Transcript"></div>
           <p class="hint small muted fine-only" data-i18n="tx.hint">Click a word to jump to it. Select words and press Delete to cut them. Press Enter to fix a caption word.</p>
           <p class="hint small muted touch-only" data-i18n="tx.hintTouch">Tap a word to jump to it. To cut a phrase, tap its first word, tap Select range, then tap its last word. Then tap Cut.</p>
+          <details id="retx" class="options" hidden>
+            <summary data-i18n="redo.summary">Transcribe again</summary>
+            <p class="hint small muted" data-i18n="redo.body">Wrong language or too many mistakes? Pick other options and transcribe again. The words change, so the current edit is kept next to the video as a .bak file.</p>
+            <div id="retx-options"></div>
+            <button id="retx-start" class="btn" type="button" data-i18n="redo.start">Transcribe again</button>
+          </details>
         </section>
 
         <section role="tabpanel" id="panel-captions" aria-labelledby="tab-captions" class="panel" hidden>
@@ -167,6 +179,14 @@
       </div>
     </section>
   </main>
+
+  <template id="tx-fields">
+    <div class="tx-fields">
+      <label class="field"><span data-i18n="opt.language">Spoken language</span><select class="tx-language"></select></label>
+      <label class="field"><span data-i18n="opt.model">Model</span><select class="tx-model"></select></label>
+      <label class="check"><input class="tx-verbatim" type="checkbox"><span data-i18n="opt.verbatim">Keep ums and uhs (CrisperWhisper, non-commercial use only)</span></label>
+    </div>
+  </template>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <script type="module" src="js/app.js"></script>

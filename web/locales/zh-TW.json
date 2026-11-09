@@ -105,5 +105,18 @@
   "err.save": "最後一次修改未能儲存：{message}",
   "err.export": "匯出失敗：{message}",
   "demo.banner": "線上展示。修改只留在這個瀏覽器。安裝 Spokecut 即可轉錄自己的影片並輸出 MP4。",
-  "demo.install": "安裝方式"
+  "demo.install": "安裝方式",
+  "opt.summary": "轉錄選項",
+  "opt.language": "說話語言",
+  "opt.auto": "自動偵測",
+  "opt.model": "模型",
+  "opt.modelDefault": "依這台電腦預設",
+  "opt.verbatim": "保留嗯和呃（CrisperWhisper，僅限非商業使用）",
+  "opt.note": "已有儲存專案的影片會照原樣開啟，這些選項只用在新的轉錄。",
+  "redo.summary": "重新轉錄",
+  "redo.body": "語言不對或錯字太多？換個選項重新轉錄。文字會改變，所以目前的剪輯會以 .bak 檔保留在影片旁邊。",
+  "redo.start": "重新轉錄",
+  "redo.failed": "無法重新轉錄：{message}。你的剪輯沒有改變。",
+  "proc.back": "返回",
+  "stage.model": "正在載入模型。第一次執行需要下載，可能要幾分鐘"
 }

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spokecut"
-version = "0.1.0"
+version = "0.2.0"
 description = "Edit talking video by editing its transcript, on your own machine. Delete words to cut them, drop pauses and repeats, burn in captions, export EDL, FCPXML and OTIO."
 readme = "README.md"
 license = "MIT"
