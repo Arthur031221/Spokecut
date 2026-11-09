@@ -65,7 +65,7 @@ def build_filter(
         label = "[v0]" if ass else "[v]"
         lines.append(f"{joined}concat=n={n}:v=1:a=1{label}[a]")
         if ass:
-            lines.append(f"[v0]ass={_filter_path(ass)}[v]")
+            lines.append(f"[v0]ass=filename={_filter_path(ass)}[v]")
     else:
         joined = "".join(f"[ta{i}]" for i in range(n))
         lines.append(f"{joined}concat=n={n}:v=0:a=1[a]")
