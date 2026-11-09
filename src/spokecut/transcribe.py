@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+import functools
 import glob
 import os
 import sys
@@ -59,6 +60,7 @@ def default_model(cuda: bool) -> str:
     return "large-v3-turbo" if cuda else "small"
 
 
+@functools.lru_cache(maxsize=1)
 def load_model(name: str, device: str = "auto"):
     from faster_whisper import WhisperModel
 

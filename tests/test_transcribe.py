@@ -58,3 +58,19 @@ def test_cuda_needs_cublas_not_just_a_device(monkeypatch):
     assert not ok and "spokecut[cuda]" in why
     monkeypatch.setattr(tr.ctypes, "CDLL", lambda name: None)
     assert tr.cuda_status() == (True, "")
+
+
+def test_the_model_is_loaded_once_for_repeated_transcriptions(monkeypatch):
+    import sys
+    import types
+
+    from spokecut import transcribe
+
+    made = []
+    fake = types.SimpleNamespace(WhisperModel=lambda *a, **k: made.append(a) or object())
+    monkeypatch.setitem(sys.modules, "faster_whisper", fake)
+    monkeypatch.setattr(transcribe, "preload_cuda_libs", lambda: None)
+    transcribe.load_model.cache_clear()
+    first = transcribe.load_model("tiny", "cpu")
+    assert transcribe.load_model("tiny", "cpu") is first and len(made) == 1
+    transcribe.load_model.cache_clear()

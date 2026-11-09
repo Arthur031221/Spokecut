@@ -119,3 +119,65 @@ def test_clean_without_captions_does_not_turn_burn_in_off_for_later(tone_video, 
 def test_keep_must_be_in_range(capsys):
     with pytest.raises(SystemExit):
         cli.build_parser().parse_args(["clean", "x.mp4", "--keep", "-1"])
+
+
+def test_listen_skips_a_port_that_is_taken():
+    import socket
+
+    with socket.socket() as taken:
+        taken.bind(("127.0.0.1", 0))
+        taken.listen(1)
+        port = taken.getsockname()[1]
+        sock = cli.listen("127.0.0.1", port)
+        try:
+            assert sock.getsockname()[1] != port
+        finally:
+            sock.close()
+
+
+def test_listen_gives_up_when_nothing_is_free():
+    import socket
+
+    with socket.socket() as taken:
+        taken.bind(("127.0.0.1", 0))
+        taken.listen(1)
+        with pytest.raises(OSError, match="all in use"):
+            cli.listen("127.0.0.1", taken.getsockname()[1], tries=1)
+
+
+def test_second_editor_serves_on_the_port_it_got(monkeypatch, capsys):
+    import socket
+
+    import uvicorn
+
+    served = {}
+    monkeypatch.setattr(uvicorn.Server, "run", lambda self, sockets=None: served.update(sockets=sockets))
+    with socket.socket() as taken:
+        taken.bind(("127.0.0.1", 0))
+        taken.listen(1)
+        port = taken.getsockname()[1]
+        assert cli.main(["edit", "--port", str(port), "--no-open"]) == 0
+        got = served["sockets"][0]
+        try:
+            assert got.getsockname()[1] != port
+        finally:
+            got.close()
+    assert f"Port {port} is in use" in capsys.readouterr().err
+
+
+@needs_ffmpeg
+def test_clean_takes_several_files_and_keeps_going_after_a_failure(tone_video, tmp_path, capsys):
+    a, c = tmp_path / "a.mp4", tmp_path / "c.mp4"
+    for video in (a, c):
+        video.write_bytes(tone_video.read_bytes())
+        prepared(video)
+    missing = tmp_path / "b.mp4"
+    code = cli.main(["clean", str(a), str(missing), str(c), "--format", "srt"])
+    err = capsys.readouterr().err
+    assert code == 2 and "2 of 3 files cleaned, 1 failed" in err
+    assert (tmp_path / "a.spokecut.srt").is_file() and (tmp_path / "c.spokecut.srt").is_file()
+
+
+def test_clean_refuses_one_output_name_for_several_files(capsys):
+    assert cli.main(["clean", "a.mp4", "b.mp4", "-o", "x.mp4"]) == 2
+    assert "one input" in capsys.readouterr().err

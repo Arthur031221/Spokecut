@@ -323,7 +323,8 @@ def test_the_preview_takes_the_shape_of_a_portrait_video(page, demo_url, demo_pr
 
     portrait = json.loads(json.dumps(demo_project))
     portrait["media"]["width"], portrait["media"]["height"] = 540, 960
-    page.route("**/demo/project.json", lambda route: route.fulfill(content_type="application/json", body=json.dumps(portrait)))
+    body = json.dumps(portrait)
+    page.route("**/demo/project.json", lambda route: route.fulfill(content_type="application/json", body=body))
     open_demo(page, demo_url)
     box = page.locator(".video-wrap").bounding_box()
     assert box["width"] / box["height"] == pytest.approx(540 / 960, abs=0.02)

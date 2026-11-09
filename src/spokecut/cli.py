@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import secrets
 import shutil
+import socket
 import sys
 import webbrowser
 from pathlib import Path
@@ -68,6 +69,20 @@ def project_for(args: argparse.Namespace, video: Path):
     return analyze(video, args.model, args.language, args.device, args.verbatim, progress_printer())
 
 
+def listen(host: str, port: int, tries: int = 20) -> socket.socket:
+    """A listening socket on the first free port from `port` up, so a second editor does not collide with the first."""
+    family = socket.AF_INET6 if ":" in host else socket.AF_INET
+    for candidate in range(port, port + tries):
+        sock = socket.socket(family, socket.SOCK_STREAM)
+        try:
+            sock.bind((host, candidate))
+            sock.listen(128)
+            return sock
+        except OSError:
+            sock.close()
+    raise OSError(f"ports {port} to {port + tries - 1} on {host} are all in use")
+
+
 def cmd_edit(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -84,12 +99,20 @@ def cmd_edit(args: argparse.Namespace) -> int:
         if video is None:
             return 2
         app.state.open_video(video)
+    try:
+        sock = listen(args.host, args.port)
+    except OSError as exc:
+        err(f"Cannot start the editor: {exc}. Pick another one with --port.")
+        return 2
+    port = sock.getsockname()[1]
+    if port != args.port:
+        err(f"Port {args.port} is in use, probably by another Spokecut. Using {port}.")
     shown = "localhost" if args.host == "127.0.0.1" else f"[{args.host}]" if ":" in args.host else args.host
-    url = f"http://{shown}:{args.port}/?t={token}"
+    url = f"http://{shown}:{port}/?t={token}"
     print(f"Spokecut {__version__} is running. Open {url}")
     if not args.no_open:
         webbrowser.open(url)
-    uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    uvicorn.Server(uvicorn.Config(app, log_level="warning")).run(sockets=[sock])
     return 0
 
 
@@ -110,15 +133,37 @@ def cmd_transcribe(args: argparse.Namespace) -> int:
 
 
 def cmd_clean(args: argparse.Namespace) -> int:
+    """Clean each file in turn. A failure in one does not stop the others, and any failure makes the exit code 1."""
+    if len(args.files) > 1 and args.output:
+        err("-o names one output file, so it works with one input. Drop it to write each result beside its video.")
+        return 2
+    codes = []
+    for name in args.files:
+        if len(args.files) > 1:
+            err(f"== {name}")
+        codes.append(clean_one(args, name))
+    if len(codes) > 1:
+        failed = sum(1 for c in codes if c)
+        err(f"{len(codes) - failed} of {len(codes)} files cleaned" + (f", {failed} failed" if failed else ""))
+    return 2 if 2 in codes else int(any(codes))
+
+
+def clean_one(args: argparse.Namespace, name: str) -> int:
     from .cleaner import apply_cleanup
     from .exporting import export_project
     from .project import save_project, sidecar_path
     from .timeline import output_duration, plan
 
-    video = check_input(args.file)
+    video = check_input(name)
     if video is None:
         return 2
-    project = project_for(args, video)
+    from .audio import MediaError
+
+    try:
+        project = project_for(args, video)
+    except (MediaError, ValueError, OSError) as exc:
+        err(f"{name}: {exc}")
+        return 1
     state = apply_cleanup(project, args.fillers, args.repeats, args.loose, args.pauses)
     if args.keep is not None:
         state.pause["keep"] = args.keep
@@ -211,7 +256,7 @@ def build_parser() -> argparse.ArgumentParser:
     common(tr)
 
     clean = sub.add_parser("clean", help="remove fillers, repeats and long pauses and write the result")
-    clean.add_argument("file")
+    clean.add_argument("files", nargs="+", metavar="file")
     clean.add_argument("-o", "--output")
     clean.add_argument("--format", choices=FORMATS, default="mp4")
     clean.add_argument("--pauses", type=float, metavar="SECONDS", help="shorten pauses at least this long")
