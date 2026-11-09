@@ -87,6 +87,7 @@ Pas besoin de navigateur dans le cas courant :
 
 ```sh
 spokecut clean talk.mp4 --pauses 0.7 --captions highlight
+spokecut clean *.mp4 --pauses 0.7
 spokecut export talk.mp4 --format fcpxml
 ```
 
